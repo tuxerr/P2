@@ -24,6 +24,8 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	
 	// binding in the name server
 	public static void register(String name, SharedObject_itf so) {
+            int new_id = serv.create(so.obj);
+            serv.register(name,new_id);
 	}
 
 	// creation of a shared object
