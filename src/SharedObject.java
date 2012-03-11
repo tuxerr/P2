@@ -1,94 +1,216 @@
 import java.io.*;
+import java.util.concurrent.locks;
+
+public enum SOStatus {
+    NL,RLC,WLC,RLT,WLT,RLT_WLC;
+}
 
 public class SharedObject implements Serializable, SharedObject_itf {
 	
-	public Object obj;
+    public Object obj;
 	
-	private int id;
+    private int id;
+
+    // 0 : NL
+    // 1 : RLC
+    // 2 : WLC
+    // 3 : RLT
+    // 4 : WLT
+    // 5 : RLT_WLC
+    private SOStatus status;
+    private Client client;
+//    private Lock lock;
+//    private Condition unlocked;
+
+    public SharedObject(Object obj,int i,Client cli) {
+	this.obj = obj;
+	id = i;
+	status = NL;
+        client=cli;
+//        lock=new ReentrantLock();
+//        unlocked=lock.newCondition();
+    }
 	
-	// values taken by lock :
-	// 0 : NL
-	// 1 : RLC
-	// 2 : WLC
-	// 3 : RLT
-	// 4 : WLT
-	// 5 : RLT_WLC
-	private int lock;
-	
-	public SharedObject(Object o, int i) {
-		obj = o;
-		id = i;
-		lock = 0;
-	}
-	
-	// invoked by the user program on the client node
-	public void lock_read() {
-		if(lock==0||lock==1) {
-			lock = 3;
-		}
-		else {
-			if(lock==2) {
-				lock = 5;
-			}
-			else {
-				System.out.println("erreur sharedobject lock_read");
-			}
-		}
-	}
+    // invoked by the user program on the client node
+    public void lock_read() {
+        switch(status) {
+        case NL:
+            status=RLT;
+            cli.lock_read(id);
+            break;
+        
+        case RLC:
+            status=RLT;
+            break;
 
-	// invoked by the user program on the client node
-	public void lock_write() {
-		if(lock==0||lock==1||lock==2) {
-			lock = 4;
-		}
-		else {
-			System.out.println("erreur sharedobject lock_write");
-		}
-	}
+        case WLC:
+            status=RLT_WLC;
+            cli.lock_read(id);
+            break;
 
-	// invoked by the user program on the client node
-	public synchronized void unlock() {
-		if(lock==3) {
-			lock = 1;
-		}
-		else {
-			if(lock==4||lock==5) {
-				lock = 2;
-			}
-			else {
-				System.out.println("erreur sharedobject unlock");
-			}
-		}
-		notify();//avant ou après le changement de lock ?
-	}
+        case RLT:
+            status=RLT;
+            break;
 
-	// callback invoked remotely by the server
-	public synchronized Object reduce_lock() {
-		if(lock==2||lock==4) {
-			lock = 3;
-		}
-		else {
-			System.out.println("erreur sharedobject reduce_lock");
-		}
-	}
+        case WLT:
+            status=WLT;
+            break;
 
-	// callback invoked remotely by the server
-	public synchronized void invalidate_reader() {
-		if(lock==1) {
-			lock = 0;
-		}
-		else {
-			System.out.println("erreur sharedobject invalidate_reader");
-		}
-	}
+        case RLT_WLC:
+            status=RLT_WLC;
+            break;
+        }
+    }
 
-	public synchronized Object invalidate_writer() {
-		if(lock==2||lock==5) {
-			lock = 0;
-		}
-		else {
-			System.out.println("erreur sharedobject invalidate_writer");
-		}
-		return obj;
-	}
+    // invoked by the user program on the client node
+    public void lock_write() {
+        switch(status) {
+        case NL:
+            status=WLT;
+            cli.lock_write(id);
+            break;
+
+        case RLC:
+            status=WLT;
+            cli.lock_write(id);
+            break;
+
+        case WLC:
+            status=WLT;
+            break;
+
+        case RLT:
+            status=WLT;
+            cli.lock_write(id);
+            break;
+
+        case WLT:
+            status=WLT;
+            break;
+
+        case RLT_WLC:
+            status=WLT;
+            break;
+        }
+
+    }
+
+    // invoked by the user program on the client node
+    public synchronized void unlock() {
+        switch(status) {
+        case NL:
+            status=NL;
+            break;
+
+        case RLC:
+            status=RLC;
+            break;
+
+        case WLC:
+            status=NL;
+            break;
+
+        case RLT:
+            status=RLC;
+            break;
+
+        case WLT:
+            status=WLC;
+            break;
+
+        case RLT_WLC:
+            status=WLC;
+            break;
+        }
+        notify();
+    }
+
+    // callback invoked remotely by the server
+    public synchronized Object reduce_lock() {
+        switch(status) {
+        case NL:
+            status=NL;
+            break;
+
+        case RLC:
+            status=NL;
+            break;
+
+        case WLC:
+            status=NL;
+            break;
+
+        case RLT:
+            status=NL;
+            break;
+
+        case WLT:
+            status=RLC;
+            break;
+
+        case RLT_WLC:
+            status=RLT;
+            break;
+        }
+    }
+
+    // callback invoked remotely by the server
+    public synchronized void invalidate_reader() {
+        switch(status) {
+        case NL:
+            status=NL;
+            break;
+
+        case RLC:
+            status=NL;
+            break;
+
+        case WLC:
+            status=WLC;
+            break;
+
+        case RLT:
+            wait();
+            status=NL;
+            break;
+
+        case WLT:
+            status=WLT;
+            break;
+
+        case RLT_WLC:
+            wait();
+            status=NL;
+            break;
+        }
+    }
+
+    public synchronized Object invalidate_writer() {
+        switch(status) {
+        case NL:
+            status=NL;
+            break;
+
+        case RLC:
+            status=NL;
+            break;
+
+        case WLC:
+            status=NL;
+            break;
+
+        case RLT:
+            status=NL;
+            break;
+
+        case WLT:
+            wait();
+            status=NL;
+            break;
+
+        case RLT_WLC:
+            status=NL;
+            break;
+        }
+    }
 }
