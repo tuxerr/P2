@@ -13,19 +13,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 
     public Client() throws RemoteException {
         super();
-        serv=null;
         objects = new HashMap<int,SharedObject>();
-        
-        try {
-            serv=(Server_itf)Naming.lookup("Server");
-        } catch(Exception e) {
-            System.err.println("Client init exception : " + e);
-            e.printStackTrace();
-        }
-
-        if(serv==null) {
-            System.out.println("Server RMI object not found");
-        }
     }
 
 
@@ -36,6 +24,17 @@ public class Client extends UnicastRemoteObject implements Client_itf {
     // initialization of the client layer
     public static void init() {
         localptr = new Client();
+        serv=null;
+        try {
+            serv=(Server_itf)Naming.lookup("Server");
+        } catch(Exception e) {
+            System.err.println("Client init exception : " + e);
+            e.printStackTrace();
+        }
+
+        if(serv==null) {
+            System.out.println("Server RMI object not found");
+        }
     }
 	
     // lookup in the name server
