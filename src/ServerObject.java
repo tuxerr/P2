@@ -1,61 +1,71 @@
 import java.util.ArrayList;
 
-
 public class ServerObject {
-	
-    public ServerObject(int id,Object o) {
-        Clients = new ArrayList<Client_itf>();
-        lock=0;
-	obj_cache=o.clone();
-    }
 
-    // 0 : NL
-    // 1 : RL
-    // 2 : WL
-    private int lock;
-    private int id;
-    private ArrayList<Client_itf> Clients;
-    private Object obj_cache;
-	
-    public void lock_read(Client cli) {
-	if(lock==0) {
-	    Clients.add(cli);
-	} else if(lock==1) {
-	    Clients.add(cli);
+	private SOStatus lock;
+	private int id;
+	private ArrayList<Client_itf> Clients;
+	private Object obj_cache;
 
-	} else if(lock==2) {
-	    for(Client_itf cli : Clients) {
-		Object o = cli.invalidate_writer(id);
-		obj_cache=o.clone();
-	    }
-	    Clients.clear();
-	    Clients.add(cli);
-	}
-        lock = 1;
-    }
-	
-    public void lock_write(Client cli) {
-	if(lock==0) {
-
-	} else if(lock==1) {
-	    for(Client_itf cli : Clients) {
-		cli.invalidate_reader(id);
-	    }
-
-	} else if(lock==2) {
-	    for(Client_itf cli : Clients) {
-		Object o = cli.invalidate_writer(id);
-		obj_cache=o.clone();
-	    }
-
+	public ServerObject(int id, Object o) {
+		lock = SOStatus.NL;
+		this.id = id;
+		Clients = new ArrayList<Client_itf>();
+		obj_cache = o;
 	}
 
-        Clients.clear();
-        Clients.add(cli);
-        lock = 2;
-    }
+	public void lock_read(Client_itf cli) {
+		if (lock == SOStatus.NL) {
+			Clients.add(cli);
 
-    public Object getCache() {
-	return obj_cache;
-    }
+		} else if (lock == SOStatus.RLT) {
+			Clients.add(cli);
+
+		} else if (lock == SOStatus.WLT) {
+			for (Client_itf client : Clients) {
+				try {
+					Object o = client.invalidate_writer(id);
+					obj_cache = o;
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+			Clients.clear();
+			Clients.add(cli);
+		}
+
+		lock = SOStatus.RLT;
+	}
+
+	public void lock_write(Client_itf cli) {
+		if (lock == SOStatus.NL) {
+
+		} else if (lock == SOStatus.RLT) {
+			for (Client_itf client : Clients) {
+				try {
+					client.invalidate_reader(id);
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+
+		} else if (lock == SOStatus.WLT) {
+			for (Client_itf client : Clients) {
+				try {
+					Object o = client.invalidate_writer(id);
+					obj_cache = o;
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+		}
+
+		Clients.clear();
+		Clients.add(cli);
+		lock = SOStatus.WLT;
+	}
+
+	public Object getCache() {
+		return obj_cache;
+	}
 }
