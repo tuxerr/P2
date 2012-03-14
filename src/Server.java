@@ -44,18 +44,21 @@ public class Server extends UnicastRemoteObject implements Server_itf {
 
 	public void register(String name, int id) throws java.rmi.RemoteException {
 		namemap.put(name, id);
+                System.out.println("Registered object id "+ id + " with name " + name);
 	}
 
 	public int create(Object o) throws java.rmi.RemoteException {
-		ServerObject obj = new ServerObject(currentid, o);
 		currentid++;
+		ServerObject obj = new ServerObject(currentid, o);
 		objmap.put(currentid, obj);
+                System.out.println("Created new Object, id "+currentid);
 		return currentid;
 	}
 
 	public Object lock_read(int id, Client_itf client)
 			throws java.rmi.RemoteException {
 		ServerObject sobj = objmap.get(id);
+                System.out.println("Locking object "+id+" for reading");
 		if (sobj != null) {
 			sobj.lock_read(client);
 			return sobj.getCache();
@@ -69,6 +72,7 @@ public class Server extends UnicastRemoteObject implements Server_itf {
 	public Object lock_write(int id, Client_itf client)
 			throws java.rmi.RemoteException {
 		ServerObject sobj = objmap.get(id);
+                System.out.println("Locking object "+id+" for writing");
 		if (sobj != null) {
 			sobj.lock_write(client);
 			return sobj.getCache();
