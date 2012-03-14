@@ -33,7 +33,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		case WLC:
 			status = SOStatus.RLT_WLC;
-			Client.lock_read(id);
+			obj=Client.lock_read(id);
 			break;
 
 		case RLT:
