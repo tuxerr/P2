@@ -23,8 +23,8 @@ public class SharedObject implements Serializable, SharedObject_itf {
 	public void lock_read() {
 		switch (status) {
 		case NL:
-			status = SOStatus.RLT;
-			Client.lock_read(id);
+                    status = SOStatus.RLT;
+			obj=Client.lock_read(id);
 			break;
 
 		case RLC:
@@ -55,12 +55,12 @@ public class SharedObject implements Serializable, SharedObject_itf {
 		switch (status) {
 		case NL:
 			status = SOStatus.WLT;
-			Client.lock_write(id);
+			obj=Client.lock_write(id);
 			break;
 
 		case RLC:
 			status = SOStatus.WLT;
-			Client.lock_write(id);
+			obj=Client.lock_write(id);
 			break;
 
 		case WLC:
@@ -69,7 +69,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		case RLT:
 			status = SOStatus.WLT;
-			Client.lock_write(id);
+			obj=Client.lock_write(id);
 			break;
 
 		case WLT:
