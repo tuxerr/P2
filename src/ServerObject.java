@@ -23,14 +23,12 @@ public class ServerObject {
 
 		} else if (lock == SOStatus.WLT) {
 			for (Client_itf client : Clients) {
-                            System.out.println("Invalidating client : "+(client==null));
 				try {
 					Object o = client.invalidate_writer(id);
 					obj_cache = o;
 				} catch (Exception e) {
-                                        e.printStackTrace();
+					e.printStackTrace();
 				}
-                                System.out.println("trolol");
 			}
 			Clients.clear();
 			Clients.add(cli);
@@ -47,7 +45,7 @@ public class ServerObject {
 				try {
 					client.invalidate_reader(id);
 				} catch (Exception e) {
-					System.out.println(e);
+					e.printStackTrace();
 				}
 			}
 
@@ -57,7 +55,7 @@ public class ServerObject {
 					Object o = client.invalidate_writer(id);
 					obj_cache = o;
 				} catch (Exception e) {
-					System.out.println(e);
+					e.printStackTrace();
 				}
 			}
 		}

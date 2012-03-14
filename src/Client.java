@@ -30,7 +30,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 		try {
 			localptr = new Client();
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		serv = null;
 		try {
@@ -49,6 +49,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	public static SharedObject lookup(String name) {
 		try {
 			int obj_id = serv.lookup(name);
+			System.out.print(obj_id);
 			if (obj_id == -1) {
 				return null;
 			} else {
@@ -57,7 +58,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 				return obj;
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -67,7 +68,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 		try {
 			serv.register(name, so.getId());
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -76,10 +77,10 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 		try {
 			int new_id = serv.create(o);
 			SharedObject obj = new SharedObject(o, new_id);
-                        objects.put(new_id,obj);
+			objects.put(new_id, obj);
 			return obj;
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -93,7 +94,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 		try {
 			return serv.lock_read(id, localptr);
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -103,7 +104,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 		try {
 			return serv.lock_write(id, localptr);
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -118,13 +119,14 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	}
 
 	// receive a reader invalidation request from the server
-    public void invalidate_reader(int id) throws java.rmi.RemoteException {		SharedObject obj = objects.get(id);
-                System.out.println("Invalidating object "+id+ "for reading");
+	public void invalidate_reader(int id) throws java.rmi.RemoteException {
+		SharedObject obj = objects.get(id);
+		System.out.println("Invalidating object " + id + "for reading");
 		if (obj != null) {
 			try {
 				obj.invalidate_reader();
 			} catch (Exception e) {
-				System.out.println(e);
+				e.printStackTrace();
 			}
 		}
 	}
@@ -132,14 +134,14 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	// receive a writer invalidation request from the server
 	public Object invalidate_writer(int id) throws java.rmi.RemoteException {
 		SharedObject obj = objects.get(id);
-                System.out.println("Invalidating object "+id+ "for writing");
+		System.out.println("Invalidating object " + id + "for writing");
 		if (obj != null) {
 			try {
 				obj.obj = obj.invalidate_writer();
 			} catch (Exception e) {
-				System.out.println(e);
+				e.printStackTrace();
 			}
-		} 
+		}
 		return obj.obj;
 	}
 }
