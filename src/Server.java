@@ -5,9 +5,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
 public class Server extends UnicastRemoteObject implements Server_itf {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private HashMap<Integer, ServerObject> objmap;
 	private HashMap<String, Integer> namemap;
@@ -61,9 +59,9 @@ public class Server extends UnicastRemoteObject implements Server_itf {
 		if (sobj != null) {
 			sobj.lock_read(client);
 			return sobj.getCache();
-		}
-		else {
-			System.out.println("Cette erreur ne peut pas arriver, vous êtes des bites.");
+		} else {
+			System.out
+					.println("Cette erreur ne peut pas arriver, vous êtes des bites.");
 			return null;
 		}
 	}
@@ -74,15 +72,18 @@ public class Server extends UnicastRemoteObject implements Server_itf {
 		if (sobj != null) {
 			sobj.lock_write(client);
 			return sobj.getCache();
-		}
-		else {
-			System.out.println("Cette erreur ne peut pas arriver, vous êtes des bites.");
+		} else {
+			System.out
+					.println("Cette erreur ne peut pas arriver, vous êtes des bites.");
 			return null;
 		}
 	}
-	
+
 	public static void main(String args[]) {
-		Server s = new Server();
-		sleep(1000);
+		try {
+			Server s = new Server();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 }
