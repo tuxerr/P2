@@ -72,12 +72,9 @@ class readListener implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 
-		System.out.println("QSGSFHDGFJGKHLBMNJLHKGFDYRSTHYJDHGYKHUL");
 		// lock the object in read mode
 		irc.sentence.lock_read();
 		// invoke the method
-		System.out.print(irc.sentence != null);
-		System.out.print(irc.sentence.obj != null);
 		String s = ((Sentence) (irc.sentence.obj)).read();
 		// unlock the object
 		irc.sentence.unlock();
