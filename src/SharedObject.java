@@ -159,7 +159,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 			break;
 
 		case RLT:
-                    while(status==RLT) {
+                    while(status==SOStatus.RLT) {
 			wait();
 			status = SOStatus.NL;
                     }
@@ -170,7 +170,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 			break;
 
 		case RLT_WLC:
-                    while(status==RLT_WLC) {
+                    while(status==SOStatus.RLT_WLC) {
 			wait();
 			status = SOStatus.NL;
                     }
@@ -197,7 +197,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 			break;
 
 		case WLT:
-                    while(status==WLT) {
+                    while(status==SOStatus.WLT) {
                         wait();
 			status = SOStatus.NL;
                     }
