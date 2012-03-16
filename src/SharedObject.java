@@ -104,6 +104,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		case WLT:
 			status = SOStatus.WLC;
+                        System.out.println("Switching from write to wcached");
 			break;
 
 		case RLT_WLC:
@@ -190,6 +191,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		case WLC:
 			status = SOStatus.NL;
+                        System.out.println("Switching from cached to uncached");
 			break;
 
 		case RLT:
@@ -201,6 +203,8 @@ public class SharedObject implements Serializable, SharedObject_itf {
                         wait();
 			status = SOStatus.NL;
                     }
+                    System.out.println("Switching from taken to uncached");
+                    status=SOStatus.NL;
                     break;
 
 		case RLT_WLC:

@@ -11,7 +11,7 @@ for i in {1..$a}; do
 done
 
 echo "sleeping 4s"
-sleep 4
+sleep 8
 echo "end sleep"
 java CompteurRead
 killall java
