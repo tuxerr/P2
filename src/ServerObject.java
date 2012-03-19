@@ -14,7 +14,7 @@ public class ServerObject {
 		obj_cache = o;
 	}
 
-	public void lock_read(Client_itf cli) {
+	public synchronized void lock_read(Client_itf cli) {
 		if (lock == SOStatus.NL) {
 			Clients.add(cli);
 
@@ -37,7 +37,7 @@ public class ServerObject {
 		lock = SOStatus.RLT;
 	}
 
-	public void lock_write(Client_itf cli) {
+	public synchronized void lock_write(Client_itf cli) {
 		if (lock == SOStatus.NL) {
 
 		} else if (lock == SOStatus.RLT) {
