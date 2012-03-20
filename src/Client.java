@@ -16,8 +16,16 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 
 	private static HashMap<Integer, SharedObject> objects;
 
+	private static int idclient;
+
 	public Client() throws RemoteException {
 		super();
+		try {
+			serv = (Server_itf) Naming.lookup("Server");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		idclient = serv.getIdClient();
 		objects = new HashMap<Integer, SharedObject>();
 	}
 
@@ -52,7 +60,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 			if (obj_id == -1) {
 				return null;
 			} else {
-				SharedObject obj = new SharedObject(null, obj_id);
+				SharedObject obj = new SharedObject(null, obj_id, idclient);
 				objects.put(obj_id, obj);
 				return obj;
 			}
@@ -75,7 +83,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	public static SharedObject create(Object o) {
 		try {
 			int new_id = serv.create(o);
-			SharedObject obj = new SharedObject(o, new_id);
+			SharedObject obj = new SharedObject(o, new_id, idclient);
 			objects.put(new_id, obj);
 			return obj;
 		} catch (Exception e) {
@@ -109,38 +117,66 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	}
 
 	// receive a lock reduction request from the server
-	public Object reduce_lock(int id) throws java.rmi.RemoteException {
+	public Object reduce_lock(int id, int clientdem) throws java.rmi.RemoteException {
 		SharedObject obj = objects.get(id);
 		if (obj != null) {
-			obj.reduce_lock();
+			try {
+				synchronized (obj) {
+					System.out.println(idclient + " : Reduce_locking object "
+							+ id + " from " +clientdem);
+					obj.reduce_lock();
+				}
+				System.out.println(idclient + " : Reduce_locking done");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return obj.obj;
 	}
 
 	// receive a reader invalidation request from the server
-	public void invalidate_reader(int id) throws java.rmi.RemoteException {
+	public void invalidate_reader(int id, int clientdem) throws java.rmi.RemoteException {
 		SharedObject obj = objects.get(id);
-		System.out.println("Invalidating object " + id + "for reading");
 		if (obj != null) {
 			try {
-				obj.invalidate_reader();
-			} catch (Exception e) {
+				synchronized (obj) {
+					System.out.println(idclient + " : Invalidating object "
+							+ id + " for reading from " +clientdem);
+					obj.invalidate_reader();
+				}
+				System.out.println(idclient + " : Invalidate Reader done from " +clientdem);
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		} else {
+			System.out.println("ERROR NULL OBJECT");
 		}
 	}
 
 	// receive a writer invalidation request from the server
-	public Object invalidate_writer(int id) throws java.rmi.RemoteException {
+	public Object invalidate_writer(int id, int clientdem) throws java.rmi.RemoteException {
 		SharedObject obj = objects.get(id);
-		System.out.println("Invalidating object " + id + "for writing");
 		if (obj != null) {
 			try {
-				obj.obj = obj.invalidate_writer();
-			} catch (Exception e) {
+				synchronized (obj) {
+					System.out.println(idclient + " : Invalidating object "
+							+ id + " for writing from " +clientdem);
+					obj.obj = obj.invalidate_writer();
+				}
+				System.out.println(idclient + " : Invalidate writer done from " +clientdem);
+			} catch (InterruptedException e) {
+				System.out
+						.println("TROLOLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
 				e.printStackTrace();
 			}
+		} else {
+			System.out.println("ERROR NULL OBJECT");
 		}
 		return obj.obj;
 	}
+	
+	public int getIdClient() throws java.rmi.RemoteException {
+		return idclient;
+	}
+	
 }

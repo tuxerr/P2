@@ -14,7 +14,7 @@ public class ServerObject {
 		obj_cache = o;
 	}
 
-	public synchronized void lock_read(Client_itf cli) {
+	public void lock_read(Client_itf cli) {
 		if (lock == SOStatus.NL) {
 			Clients.add(cli);
 
@@ -24,7 +24,7 @@ public class ServerObject {
 		} else if (lock == SOStatus.WLT) {
 			for (Client_itf client : Clients) {
 				try {
-					Object o = client.invalidate_writer(id);
+					Object o = client.reduce_lock(id, cli.getIdClient());
 					obj_cache = o;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -33,17 +33,16 @@ public class ServerObject {
 			Clients.clear();
 			Clients.add(cli);
 		}
-
 		lock = SOStatus.RLT;
 	}
 
-	public synchronized void lock_write(Client_itf cli) {
+	public void lock_write(Client_itf cli) {
 		if (lock == SOStatus.NL) {
 
 		} else if (lock == SOStatus.RLT) {
 			for (Client_itf client : Clients) {
 				try {
-					client.invalidate_reader(id);
+					client.invalidate_reader(id, cli.getIdClient());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -52,14 +51,13 @@ public class ServerObject {
 		} else if (lock == SOStatus.WLT) {
 			for (Client_itf client : Clients) {
 				try {
-					Object o = client.invalidate_writer(id);
+					Object o = client.invalidate_writer(id, cli.getIdClient());
 					obj_cache = o;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-
 		Clients.clear();
 		Clients.add(cli);
 		lock = SOStatus.WLT;

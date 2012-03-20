@@ -7,14 +7,16 @@ import java.util.HashMap;
 public class Server extends UnicastRemoteObject implements Server_itf {
 
 	private static final long serialVersionUID = 1L;
-	private HashMap<Integer, ServerObject> objmap;
-	private HashMap<String, Integer> namemap;
+	private final HashMap<Integer, ServerObject> objmap;
+	private final HashMap<String, Integer> namemap;
 	private int currentid;
+	private static int idclient;
 
 	public Server() throws RemoteException {
 		objmap = new HashMap<Integer, ServerObject>();
 		namemap = new HashMap<String, Integer>();
 		currentid = -1;
+		idclient = 0;
 
 		try {
 			LocateRegistry.createRegistry(1099);
@@ -44,24 +46,26 @@ public class Server extends UnicastRemoteObject implements Server_itf {
 
 	public void register(String name, int id) throws java.rmi.RemoteException {
 		namemap.put(name, id);
-                System.out.println("Registered object id "+ id + " with name " + name);
+		System.out.println("Registered object id " + id + " with name " + name);
 	}
 
 	public int create(Object o) throws java.rmi.RemoteException {
 		currentid++;
 		ServerObject obj = new ServerObject(currentid, o);
 		objmap.put(currentid, obj);
-                System.out.println("Created new Object, id "+currentid);
+		System.out.println("Created new Object, id " + currentid);
 		return currentid;
 	}
 
 	public Object lock_read(int id, Client_itf client)
 			throws java.rmi.RemoteException {
 		ServerObject sobj = objmap.get(id);
-                System.out.println("Locking object "+id+" for reading");
+		System.out.println("Locking object " + id + " for reading");
 		if (sobj != null) {
-			sobj.lock_read(client);
-			return sobj.getCache();
+			synchronized (sobj) {
+				sobj.lock_read(client);
+				return sobj.getCache();
+			}
 		} else {
 			System.out
 					.println("Cette erreur ne peut pas arriver, vous êtes des bites.");
@@ -72,14 +76,26 @@ public class Server extends UnicastRemoteObject implements Server_itf {
 	public Object lock_write(int id, Client_itf client)
 			throws java.rmi.RemoteException {
 		ServerObject sobj = objmap.get(id);
-                System.out.println("Locking object "+id+" for writing");
+		System.out.println("Locking object " + id + " for writing");
 		if (sobj != null) {
-			sobj.lock_write(client);
-			return sobj.getCache();
+			synchronized (sobj) {
+				sobj.lock_write(client);
+				return sobj.getCache();
+			}
 		} else {
 			System.out
 					.println("Cette erreur ne peut pas arriver, vous êtes des bites.");
 			return null;
+		}
+	}
+
+	public int getIdClient() throws java.rmi.RemoteException {
+		try {
+			idclient++;
+			return idclient;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
 		}
 	}
 
@@ -90,4 +106,5 @@ public class Server extends UnicastRemoteObject implements Server_itf {
 			e.printStackTrace();
 		}
 	}
+
 }
