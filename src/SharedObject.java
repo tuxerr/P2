@@ -239,8 +239,9 @@ public class SharedObject implements Serializable, SharedObject_itf {
 			while (status == SOStatus.WLT) {
 				System.out.println(idclient + " : Waiting ...");
 				wait();
-				status = SOStatus.NL;
+                                System.out.println(idclient + " : Waiting stopped : switching to NL");
 			}
+                        status = SOStatus.NL;
 			System.out.println(idclient + " : Switching from wtaken to uncached");
 			break;
 
