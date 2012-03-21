@@ -134,7 +134,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 	}
 
 	// callback invoked remotely by the server
-	public synchronized Object reduce_lock() throws InterruptedException {
+	public Object reduce_lock() throws InterruptedException {
 		switch (status) {
 		case NL:
 			status = SOStatus.NL;
@@ -173,7 +173,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 	}
 
 	// callback invoked remotely by the server
-	public synchronized void invalidate_reader() throws InterruptedException {
+	public void invalidate_reader() throws InterruptedException {
 		switch (status) {
 		case NL:
 			status = SOStatus.NL;
@@ -213,7 +213,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 		}
 	}
 
-	public synchronized Object invalidate_writer() throws InterruptedException {
+	public Object invalidate_writer() throws InterruptedException {
 		switch (status) {
 		case NL:
 			status = SOStatus.NL;

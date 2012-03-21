@@ -13,6 +13,7 @@ public class Irc extends Frame {
 	SharedObject sentence;
 	static String myName;
 
+	private static final long serialVersionUID = 1L;
 	public static void main(String argv[]) {
 
 		if (argv.length != 1) {
