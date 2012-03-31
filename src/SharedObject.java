@@ -187,8 +187,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 			} else {
 				status = SOStatus.RLT;
 			}
-			System.out.println(idclient
-					+ " : FAIL RMI RL_NL");
+			System.out.println(idclient + " : FAIL RMI RL_NL");
 			break;
 
 		case RLC:
