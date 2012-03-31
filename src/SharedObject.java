@@ -178,8 +178,8 @@ public class SharedObject implements Serializable, SharedObject_itf {
 	public Object reduce_lock() throws InterruptedException {
 		switch (status) {
 		case NL:
-			while ((status != SOStatus.WLC) || (status != SOStatus.RLT_WLC)) {
-				System.out.println(idclient + " : Waiting ...");
+			while ((status != SOStatus.WLC) && (status != SOStatus.RLT_WLC)) {
+				System.out.println(idclient + " : Waiting RL ...");
 				wait();
 			}
 			if (status == SOStatus.WLC) {
@@ -208,8 +208,8 @@ public class SharedObject implements Serializable, SharedObject_itf {
 			break;
 
 		case WLT:
-			while ((status != SOStatus.WLC) || (status != SOStatus.RLT_WLC)) {
-				System.out.println(idclient + " : Waiting ...");
+			while ((status != SOStatus.WLC) && (status != SOStatus.RLT_WLC)) {
+				System.out.println(idclient + " : Waiting RL ...");
 				wait();
 			}
 			if (status == SOStatus.WLC) {
@@ -262,7 +262,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		case RLT:
 			while (status != SOStatus.RLC) {
-				System.out.println(idclient + " : Waiting ...");
+				System.out.println(idclient + " : Waiting IR ...");
 				wait();
 			}
 			status = SOStatus.NL;
@@ -277,7 +277,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		case RLT_WLC:
 			while (status != SOStatus.WLC) {
-				System.out.println(idclient + " : Waiting ...");
+				System.out.println(idclient + " : Waiting IR ...");
 				wait();
 			}
 			status = SOStatus.NL;
@@ -291,7 +291,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 	public Object invalidate_writer() throws InterruptedException {
 		switch (status) {
 		case NL:
-			while ((status != SOStatus.WLC) || (status != SOStatus.RLC)) {
+			while ((status != SOStatus.WLC) && (status != SOStatus.RLC)) {
 				System.out.println(idclient + " : Waiting RMI FAIL IW_NL ...");
 				wait();
 				System.out.println(idclient
@@ -325,7 +325,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		case WLT:
 			while (status != SOStatus.WLC) {
-				System.out.println(idclient + " : Waiting  ...");
+				System.out.println(idclient + " : Waiting  IW ...");
 				wait();
 				System.out.println(idclient
 						+ " : Waiting stopped : switching to NL");
@@ -337,7 +337,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		case RLT_WLC:
 			while (status != SOStatus.WLC) {
-				System.out.println(idclient + " : Waiting ...");
+				System.out.println(idclient + " : Waiting IW ...");
 				wait();
 				System.out.println(idclient
 						+ " : Waiting stopped : switching to NL");

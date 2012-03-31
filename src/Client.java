@@ -166,10 +166,10 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 				synchronized (obj) {
 					System.out.println(idclient + " : Invalidating object "
 							+ id + " for writing from " + clientdem);
-					obj.obj = obj.invalidate_writer();
+					Object wtf = obj.invalidate_writer();
 					System.out.println(idclient
 							+ " : Invalidate writer done from " + clientdem);
-					return obj.obj;
+					return wtf;
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
