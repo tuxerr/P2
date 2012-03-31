@@ -5,9 +5,6 @@ import java.util.HashMap;
 
 public class Client extends UnicastRemoteObject implements Client_itf {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private static Client localptr;

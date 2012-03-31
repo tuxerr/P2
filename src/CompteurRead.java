@@ -10,7 +10,5 @@ public class CompteurRead {
                     System.out.println(((Entier) x.obj).getCompteur());
                     x.unlock();
 		}
-                System.exit(0);
 	}
-	
 }

@@ -30,7 +30,6 @@ public class ServerObject {
 					e.printStackTrace();
 				}
 			}
-			Clients.clear();
 			Clients.add(cli);
 		}
 		lock = SOStatus.RLT;

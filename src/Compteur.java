@@ -23,6 +23,9 @@ public class Compteur {
 			System.out.println("Value : " + ((Entier) x.obj).getCompteur());
 			((Entier) x.obj).incr();
 			x.unlock();
+			x.lock_read();
+			System.out.println("READ Value : " + ((Entier) x.obj).getCompteur());
+			x.unlock();
 		}
 		System.out.println("ENDING");
 	}
