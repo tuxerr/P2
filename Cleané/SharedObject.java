@@ -165,9 +165,6 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		switch (status) {
 		case NL:
-			while (status != SOStatus.RLC) {
-				wait();
-			}
 			status = SOStatus.NL;
 			break;
 

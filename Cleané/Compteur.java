@@ -19,13 +19,13 @@ public class Compteur {
 		int i;
 		int max = Integer.parseInt(argv[0]);
 		for (i = 0; i < max; i++) {
-                    System.out.println("lock write\n");
 			x.lock_write();
 			((Entier_itf) x).incr();
 			x.unlock();
 			x.lock_write();
 			x.unlock();
 			x.lock_read();
+                        System.out.println(((Entier_itf) x).getCompteur());
 			x.unlock();
 			x.lock_read();
 			x.unlock();
