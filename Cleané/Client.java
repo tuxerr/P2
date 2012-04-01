@@ -55,11 +55,12 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 			if (obj_id == -1) {
 				return null;
 			} else {
-                            // on crée un SharedObject de type sharedobject car on n'a pas la classe voulue. On créera un stub lors du premier lock_writer ou lock_read.
+                                // on crée un SharedObject de type sharedobject car on n'a pas la classe voulue. On créera un stub lors du premier lock_writer ou lock_read.
                                 lookuplock.lock();
                                 Object o = lock_read(obj_id);
                                 SharedObject obj = stubgen.generateStubFromObject(o,obj_id);
                                 objects.put(obj_id, obj);
+                                obj.setLock(SOStatus.RLC);
                                 lookuplock.unlock();
                                 return obj;
 			}

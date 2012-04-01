@@ -11,10 +11,17 @@ import javax.tools.ToolProvider;
 
 public class StubGenerator {
     public SharedObject generateStubFromObject(Object o,int i) {
-        String stubname = createStubFileFromObject(o);
+        String stubname=o.getClass().getName()+"_stub";
+        String stubfilename = stubname+".java";
+
+        if((new File(stubfilename)).exists()) {
+            System.out.println("File already exists");
+        } else {
+            createStubFileFromObject(o);
+        }
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         SharedObject so=null;
-        compiler.run(null,null,null,stubname+".java");
+        compiler.run(null,null,null,stubfilename);
         Class<?> c;
         Constructor<?> cons;
         try {
@@ -28,7 +35,7 @@ public class StubGenerator {
         return so;
     }
 
-    private String createStubFileFromObject(Object o) {
+    private void createStubFileFromObject(Object o) {
         // l'objet o de nom de classe C doit avoir une interface de type C_itf.
         String classname = o.getClass().getName();
         String interfacename = classname + "_itf";
@@ -128,9 +135,7 @@ public class StubGenerator {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return stubname;
+
     }
-
-
 
 }

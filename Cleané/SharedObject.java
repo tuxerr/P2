@@ -118,6 +118,10 @@ public class SharedObject implements Serializable, SharedObject_itf {
 		notify();
 	}
 
+        public synchronized void setLock(SOStatus s) {
+                status=s;
+        }
+
 	// callback invoked remotely by the server
 	public Object reduce_lock() throws InterruptedException {
 		switch (status) {
@@ -165,6 +169,9 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 		switch (status) {
 		case NL:
+			while (status != SOStatus.RLC) {
+				wait();
+			}
 			status = SOStatus.NL;
 			break;
 
