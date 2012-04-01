@@ -19,8 +19,9 @@ public class Compteur {
 		int i;
 		int max = Integer.parseInt(argv[0]);
 		for (i = 0; i < max; i++) {
+                    System.out.println("lock write\n");
 			x.lock_write();
-			((Entier) x.obj).incr();
+			((Entier_itf) x).incr();
 			x.unlock();
 			x.lock_write();
 			x.unlock();

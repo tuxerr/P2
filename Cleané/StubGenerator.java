@@ -14,7 +14,7 @@ public class StubGenerator {
         String stubname = createStubFileFromObject(o);
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         SharedObject so=null;
-        compiler.run(null,null,null,"-d",stubname+".java");
+        compiler.run(null,null,null,stubname+".java");
         Class<?> c;
         Constructor<?> cons;
         try {

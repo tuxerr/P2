@@ -1,6 +1,5 @@
 
-public class Entier implements java.io.Serializable {
-	
+public class Entier implements Entier_itf, java.io.Serializable  {
 	private static final long serialVersionUID = 1L;
 	private int c;
 	
