@@ -56,6 +56,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
                                 Object o = serv.lock_read(obj_id, localptr);
                                 SharedObject obj = stubgen.generateStubFromObject(o,obj_id);
 				objects.put(obj_id, obj);
+                                obj.unlock();
 				return obj;
 			}
 		} catch (RemoteException e) {
