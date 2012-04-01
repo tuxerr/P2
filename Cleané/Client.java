@@ -41,6 +41,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 		if (serv == null) {
 			System.out.println("Server RMI object not found");
 		}
+                StubGenerator sg = new StubGenerator();
 	}
 
 	// lookup in the name server
@@ -50,7 +51,8 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 			if (obj_id == -1) {
 				return null;
 			} else {
-				SharedObject obj = new SharedObject(null, obj_id);
+                            // on crée un SharedObject de type sharedobject car on n'a pas la classe voulue. On créera un stub lors du premier lock_writer ou lock_read.
+                                SharedObject obj = new SharedObject(null, obj_id);
 				objects.put(obj_id, obj);
 				return obj;
 			}
@@ -73,7 +75,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	public static SharedObject create(Object o) {
 		try {
 			int new_id = serv.create(o);
-			SharedObject obj = new SharedObject(o, new_id);
+			SharedObject obj = stubgen.generateStubFromObject(o,new_id);
 			objects.put(new_id, obj);
 			return obj;
 		} catch (RemoteException e) {

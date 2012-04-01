@@ -3,7 +3,7 @@ import java.io.Serializable;
 public class SharedObject implements Serializable, SharedObject_itf {
 
 	private static final long serialVersionUID = 1L;
-	public Object obj;
+	protected Object obj;
 	private Object old;
 	private int id;
 	private SOStatus status;
