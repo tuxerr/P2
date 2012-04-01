@@ -15,9 +15,7 @@ public class StubGenerator {
         String stubfilename = stubname+".java";
         SharedObject so=null;
 
-        if((new File(stubfilename)).exists()) {
-            System.out.println("File already exists");
-        } else {
+        if(!(new File(stubfilename)).exists()) {
             createStubFileFromObject(o);
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             compiler.run(null,null,null,stubfilename);
