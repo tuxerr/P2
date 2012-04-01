@@ -13,15 +13,16 @@ public class StubGenerator {
     public SharedObject generateStubFromObject(Object o,int i) {
         String stubname=o.getClass().getName()+"_stub";
         String stubfilename = stubname+".java";
+        SharedObject so=null;
 
         if((new File(stubfilename)).exists()) {
             System.out.println("File already exists");
         } else {
             createStubFileFromObject(o);
+            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            compiler.run(null,null,null,stubfilename);
         }
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        SharedObject so=null;
-        compiler.run(null,null,null,stubfilename);
+
         Class<?> c;
         Constructor<?> cons;
         try {
