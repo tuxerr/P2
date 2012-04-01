@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-
+        
 public class ServerObject {
 
 	private SOStatus lock;

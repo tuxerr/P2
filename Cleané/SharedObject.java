@@ -9,7 +9,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 	private SOStatus status;
 	private boolean appel;
 
-	public SharedObject(Object obj, int i, int idclient) {
+	public SharedObject(Object obj, int i) {
 		this.obj = obj;
 		this.old = null;
 		id = i;

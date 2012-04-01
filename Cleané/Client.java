@@ -9,7 +9,6 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	private static Client localptr;
 	private static Server_itf serv;
 	private static HashMap<Integer, SharedObject> objects;
-	private static int idclient;
 
 	public Client() throws RemoteException {
 		super();
@@ -51,7 +50,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 			if (obj_id == -1) {
 				return null;
 			} else {
-				SharedObject obj = new SharedObject(null, obj_id, idclient);
+				SharedObject obj = new SharedObject(null, obj_id);
 				objects.put(obj_id, obj);
 				return obj;
 			}
@@ -74,7 +73,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	public static SharedObject create(Object o) {
 		try {
 			int new_id = serv.create(o);
-			SharedObject obj = new SharedObject(o, new_id, idclient);
+			SharedObject obj = new SharedObject(o, new_id);
 			objects.put(new_id, obj);
 			return obj;
 		} catch (RemoteException e) {
@@ -149,9 +148,4 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 			return null;
 		}
 	}
-
-	public int getIdClient() throws java.rmi.RemoteException {
-		return idclient;
-	}
-
 }
