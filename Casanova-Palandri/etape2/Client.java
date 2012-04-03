@@ -9,10 +9,10 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	private static final long serialVersionUID = 1L;
 	private static Client localptr;
 	private static Server_itf serv;
-	public static HashMap<Integer, SharedObject> objects;
-	private static StubGenerator stubgen;
-	private static ReentrantLock lookuplock;
-
+	private static HashMap<Integer, SharedObject> objects;
+        private static StubGenerator stubgen;
+        private static ReentrantLock lookuplock;
+    
 	public Client() throws RemoteException {
 		super();
 		try {
@@ -44,8 +44,8 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 		if (serv == null) {
 			System.out.println("Server RMI object not found");
 		}
-		stubgen = new StubGenerator();
-		lookuplock = new ReentrantLock();
+                stubgen = new StubGenerator();
+                lookuplock = new ReentrantLock();
 	}
 
 	// lookup in the name server
@@ -55,16 +55,14 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 			if (obj_id == -1) {
 				return null;
 			} else {
-				// on crée un SharedObject de type sharedobject car on n'a pas
-				// la classe voulue. On créera un stub lors du premier
-				// lock_writer ou lock_read.
-				lookuplock.lock();
-				Object o = lock_read(obj_id);
-				SharedObject obj = stubgen.generateStubFromObject(o, obj_id);
-				objects.put(obj_id, obj);
-				obj.setLock(SOStatus.RLC);
-				lookuplock.unlock();
-				return obj;
+                                // on crée un SharedObject de type sharedobject car on n'a pas la classe voulue. On créera un stub lors du premier lock_writer ou lock_read.
+                                lookuplock.lock();
+                                Object o = lock_read(obj_id);
+                                SharedObject obj = stubgen.generateStubFromObject(o,obj_id);
+                                objects.put(obj_id, obj);
+                                obj.setLock(SOStatus.RLC);
+                                lookuplock.unlock();
+                                return obj;
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -85,7 +83,7 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	public static SharedObject create(Object o) {
 		try {
 			int new_id = serv.create(o);
-			SharedObject obj = stubgen.generateStubFromObject(o, new_id);
+			SharedObject obj = stubgen.generateStubFromObject(o,new_id);
 			objects.put(new_id, obj);
 			return obj;
 		} catch (RemoteException e) {
@@ -119,7 +117,8 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	}
 
 	// receive a lock reduction request from the server
-	public Object reduce_lock(int id) throws java.rmi.RemoteException {
+	public Object reduce_lock(int id)
+			throws java.rmi.RemoteException {
 		SharedObject obj = objects.get(id);
 		try {
 			synchronized (obj) {
@@ -134,22 +133,23 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 
 	// receive a reader invalidation request from the server
 	public void invalidate_reader(int id) throws java.rmi.RemoteException {
-
-		lookuplock.lock();
-		SharedObject obj = objects.get(id);
-		lookuplock.unlock();
-		try {
-			synchronized (obj) {
-				obj.invalidate_reader();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+                
+                lookuplock.lock();
+                SharedObject obj = objects.get(id);
+                lookuplock.unlock();         
+                try {
+                        synchronized (obj) {
+                                obj.invalidate_reader();
+                        }
+                } catch (Exception e) {
+                        e.printStackTrace();
+                }
+         
 	}
 
 	// receive a writer invalidation request from the server
-	public Object invalidate_writer(int id) throws java.rmi.RemoteException {
+	public Object invalidate_writer(int id)
+			throws java.rmi.RemoteException {
 		SharedObject obj = objects.get(id);
 		try {
 			synchronized (obj) {
