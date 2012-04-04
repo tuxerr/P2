@@ -71,11 +71,11 @@ public class Client extends UnicastRemoteObject implements Client_itf {
 	}
 
 	// binding in the name server
-	public static void register(String name, SharedObject so) {
+	public static void register(String name, SharedObject_itf so) {
 		try {
-			serv.register(name, so.getId());
+                    serv.register(name, ((SharedObject)so).getId());
 		} catch (RemoteException e) {
-			e.printStackTrace();
+                    e.printStackTrace();
 		}
 	}
 
