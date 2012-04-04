@@ -54,75 +54,80 @@ public class StubGenerator {
             inter_methods = inter_class.getMethods();
 
             for (Method m : inter_methods) {
-                StringBuilder sb = new StringBuilder();
-                int methodmodifiers = m.getModifiers();
-                sb.append("\tpublic");
+                String methodname = m.getName();
 
-                //method modifiers
-                if(Modifier.isFinal(methodmodifiers)) {
-                    sb.append(" final");
-                }
-                if(Modifier.isStatic(methodmodifiers)) {
-                    sb.append(" static");
-                }
-                if(Modifier.isSynchronized(methodmodifiers)) {
-                    sb.append(" static");
-                }
-                
-                //method name and return types
-                boolean returnisvoid = m.getReturnType().getName().equals("void");
-                sb.append(" " + m.getReturnType().getName());
+                // if the methods are in the original interface, not in the extends SharedObject_itf
+                if(!methodname.equals("unlock") && !methodname.equals("lock_read") && !methodname.equals("lock_write")) {
+                    StringBuilder sb = new StringBuilder();
+                    int methodmodifiers = m.getModifiers();
+                    sb.append("\tpublic");
 
-                sb.append(" " + m.getName()+ "(");
-                
-
-                //method parameters
-                int num=0;
-                for(Class c : m.getParameterTypes()) {
-                    if(num!=0) {
-                        sb.append(", ");
+                    //method modifiers
+                    if(Modifier.isFinal(methodmodifiers)) {
+                        sb.append(" final");
                     }
-                    sb.append(c.getName()+ " a" + num);
-                    num++;
-                }
-
-                sb.append(")");
-                if(m.getExceptionTypes().length > 0) {
-                    sb.append(" throws");
-                }
-                
-                // method exceptions
-                num=0;
-                for(Class c : m.getExceptionTypes()) {
-                    if(num!=0) {
-                        sb.append(", ");
+                    if(Modifier.isStatic(methodmodifiers)) {
+                        sb.append(" static");
                     }
-                    sb.append(" " + c.getName());
-                    num++;
-                }
-                
-
-                //method content
-                sb.append(" {\n");
-                sb.append("\t\t" + classname + " o = (" + classname + ") obj; \n");
-
-                sb.append("\t\t");
-                if(!returnisvoid) {
-                    sb.append("return ");
-                }
-                sb.append("o."+m.getName()+"(");
-                num=0;
-                for(Class c : m.getParameterTypes()) {
-                    if(num!=0) {
-                        sb.append(",");
+                    if(Modifier.isSynchronized(methodmodifiers)) {
+                        sb.append(" static");
                     }
-                    sb.append("a"+num);
-                    num++;
-                }
-                sb.append(");\n");
                 
-                sb.append("\t}\n\n");
-                writer.write(sb.toString());                
+                    //method name and return types
+                    boolean returnisvoid = m.getReturnType().getName().equals("void");
+                    sb.append(" " + m.getReturnType().getName());
+
+                    sb.append(" " + m.getName()+ "(");
+                
+
+                    //method parameters
+                    int num=0;
+                    for(Class c : m.getParameterTypes()) {
+                        if(num!=0) {
+                            sb.append(", ");
+                        }
+                        sb.append(c.getName()+ " a" + num);
+                        num++;
+                    }
+
+                    sb.append(")");
+                    if(m.getExceptionTypes().length > 0) {
+                        sb.append(" throws");
+                    }
+                
+                    // method exceptions
+                    num=0;
+                    for(Class c : m.getExceptionTypes()) {
+                        if(num!=0) {
+                            sb.append(", ");
+                        }
+                        sb.append(" " + c.getName());
+                        num++;
+                    }
+                
+
+                    //method content
+                    sb.append(" {\n");
+                    sb.append("\t\t" + classname + " o = (" + classname + ") obj; \n");
+
+                    sb.append("\t\t");
+                    if(!returnisvoid) {
+                        sb.append("return ");
+                    }
+                    sb.append("o."+m.getName()+"(");
+                    num=0;
+                    for(Class c : m.getParameterTypes()) {
+                        if(num!=0) {
+                            sb.append(",");
+                        }
+                        sb.append("a"+num);
+                        num++;
+                    }
+                    sb.append(");\n");
+                
+                    sb.append("\t}\n\n");
+                    writer.write(sb.toString());                
+                }
             }
 
 

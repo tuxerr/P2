@@ -1,15 +1,13 @@
-import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 public class SharedObject implements Serializable, SharedObject_itf {
 
 	private static final long serialVersionUID = 1L;
-	public transient Object obj;
+	public Object obj;
 	private Object old;
 	private int id;
 	private SOStatus status;
 	private boolean appel;
-	private boolean lol;
 
 	public SharedObject(Object obj, int i) {
 		this.obj = obj;
@@ -17,7 +15,6 @@ public class SharedObject implements Serializable, SharedObject_itf {
 		id = i;
 		status = SOStatus.NL;
 		appel = false;
-		lol = true;
 	}
 
 	// invoked by the user program on the client node
@@ -121,9 +118,9 @@ public class SharedObject implements Serializable, SharedObject_itf {
 		notify();
 	}
 
-	public synchronized void setLock(SOStatus s) {
-		status = s;
-	}
+        public synchronized void setLock(SOStatus s) {
+                status=s;
+        }
 
 	// callback invoked remotely by the server
 	public Object reduce_lock() throws InterruptedException {
@@ -247,26 +244,10 @@ public class SharedObject implements Serializable, SharedObject_itf {
 			status = SOStatus.NL;
 			break;
 		}
+
 		old = obj;
 		obj = null;
 		return old;
-	}
-
-	// readResolve
-	public Object readResolve() throws ObjectStreamException {
-		if (this.lol) {
-			this.lol = false;
-			return this;
-		} else {
-			this.lol = true;
-			if (Client.objects.containsKey(this.id)) {
-				return Client.objects.get(this.id);
-			} else {
-				this.status = SOStatus.NL;
-				Client.objects.put(this.id, this);
-				return this;
-			}
-		}
 	}
 
 	public int getId() {
