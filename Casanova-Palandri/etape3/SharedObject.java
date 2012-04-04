@@ -9,7 +9,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 	private int id;
 	private SOStatus status;
 	private boolean appel;
-	private boolean lol;
+	private boolean cote;
 
 	public SharedObject(Object obj, int i) {
 		this.obj = obj;
@@ -17,7 +17,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 		id = i;
 		status = SOStatus.NL;
 		appel = false;
-		lol = true;
+		cote = true;
 	}
 
 	// invoked by the user program on the client node
@@ -88,7 +88,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 		}
 
 		obj = Client.lock_write(id);
-		if (obj != null) {
+		synchronized (this) {
 			status = SOStatus.WLT;
 			appel = false;
 		}
@@ -254,11 +254,11 @@ public class SharedObject implements Serializable, SharedObject_itf {
 
 	// readResolve
 	public Object readResolve() throws ObjectStreamException {
-		if (this.lol) {
-			this.lol = false;
+		if (this.cote) {
+			this.cote = false;
 			return this;
 		} else {
-			this.lol = true;
+			this.cote = true;
 			if (Client.objects.containsKey(this.id)) {
 				return Client.objects.get(this.id);
 			} else {

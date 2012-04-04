@@ -85,7 +85,7 @@ public class SharedObject implements Serializable, SharedObject_itf {
 		}
 
 		obj = Client.lock_write(id);
-		if (obj != null) {
+		synchronized (this) {
 			status = SOStatus.WLT;
 			appel = false;
 		}
